@@ -1,0 +1,17 @@
+(defn fizz-buzz [numero]
+(cond
+    (and (= 0 (mod numero 3)) (= 0 (mod numero 5))) "fizzbuzz"
+    (= 0 (mod numero 3)) "fizz"
+    (= 0 (mod numero 5)) "buzz"
+    :else numero))
+
+(defn divisivel-por? [numerador denomidador]
+            (zero? (mod numerador denomidador)))
+
+(defn fizzbuzz [numero]
+  (cond
+    (and (divisivel-por? numero 3) (divisivel-por? numero 5)) "fizzbuzz"
+    (divisivel-por? numero 3) "fizz"
+    (divisivel-por? numero 5) "buzz"
+    :else numero))
+
