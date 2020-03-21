@@ -59,3 +59,31 @@ despesas
 
 (def valores (map valor-sinalizado transacoes))
 (class (map valor-sinalizado transacoes))
+
+;para propósito de testes de relatórios, queremos várias transações.
+
+;; rand-nth retorna um valor aleatório dentro de uma coleção
+(rand-nth ["despesa" "receita"])
+
+;; rand-int retorna um número inteiro aleatório entre 0 e
+;; o argumento, sem incluir o argumento nas possibilidades
+;; daí multiplicamos por 0.01M para ter um número real com
+;; duas casas decimais
+
+(* (rand-int 100001) 0.01M)
+
+(defn transacao-aleatoria []
+    {:tipo (rand-nth ["despesa" "receita"])
+     :valor (* (rand-int 100001) 0.01M)})4
+
+;; repeatedly produz uma sequência preguiçosa, cujos elementos são
+;; chamadas à função que lhe é passada como argumento
+(repeatedly 3 transacao-aleatoria)
+(class (repeatedly 3 transacao-aleatoria))
+
+;; quando não dizemos quantos elementos queremos, repeatedly cria
+;; uma sequência infinita
+(def transacoes-aleatorias (repeatedly transacao-aleatoria))
+
+(take 1 transacoes-aleatorias)
+(take 5 transacoes-aleatorias)
