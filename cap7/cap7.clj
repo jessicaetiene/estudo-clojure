@@ -211,3 +211,14 @@
 
 (defn saldo [transacoes]
     (saldo-acumulado 0 transacoes))
+
+;; nova versão de saldo, desta vez com recur
+(defn saldo
+([transacoes] (saldo 0 transacoes))
+([acumulado transacoes]
+(if (empty? transacoes)
+acumulado
+;;
+vvvvv aqui utilizamos recur em vez de saldo
+(recur (calcular acumulado (first transacoes))
+(rest transacoes)))))
