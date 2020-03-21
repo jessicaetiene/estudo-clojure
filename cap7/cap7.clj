@@ -209,5 +209,51 @@
             acumulado))
 
 
-(defn saldo [transacoes]
+(defn saldo 
+    ;; caso a função receba só um argumento
+    ([transacoes]
     (saldo-acumulado 0 transacoes))
+    
+    ;; caso a função receba dois argumentos
+    ([acumulado transacoes]
+     (if-let [transaco (first transacoes)]
+       (saldo  (calcular acumulado transacao) (rest transacoes))
+       acumulado)))
+
+(saldo transacoes)
+;; 2593M
+(saldo 0 transacoes)
+;; 2593M
+
+
+;Tail Call Optimization e Tail Recursion Elimination
+    ;; ** Quando uma função é invocada, um conjunto de dados é alocado na memória do seu computador.
+    ;; ** para cada função, são guardadas as variáveis locais à função, os parâmetros que lhe foram passados e o
+    ;;    endereço de memória para o qual o programa deve retornar
+    ;;    quando a função acabar.
+
+
+;; Tail Call Optimization (TCO) é uma técnica que busca
+;; otimizar a alocação de dados na pilha de execução quando a última
+;; instrução em uma função é a aplicação de uma outra função.
+
+;; nova versão de saldo, com tail recursion
+(def saldo
+    ([transacoes] (saldo 0 transacoes))
+    ([acumulado transacoes]
+        (if (empty? transacoes)
+            acumulado
+            (saldo (calcular acumulado (first transacao)) 
+                   (rest transacoes)))))
+
+
+recur -> de uma forma especial de Clojure que faz a tail recursion elimination
+(def saldo
+    ([transacoes] (saldo 0 transacoes))
+    ([acumulado transacoes]
+        (if (empty? transacoes)
+            acumulado
+            (recur (calcular acumulado (first transacao)) 
+                   (rest transacoes)))))
+
+;; recur é usada para indicar que um loop recursivo vai começar e o compilador pode realizar suas otimizações.
