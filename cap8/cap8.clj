@@ -74,7 +74,7 @@ despesas
 
 (defn transacao-aleatoria []
     {:tipo (rand-nth ["despesa" "receita"])
-     :valor (* (rand-int 100001) 0.01M)})4
+     :valor (* (rand-int 100001) 0.01M)})
 
 ;; repeatedly produz uma sequência preguiçosa, cujos elementos são
 ;; chamadas à função que lhe é passada como argumento
@@ -87,3 +87,67 @@ despesas
 
 (take 1 transacoes-aleatorias)
 (take 5 transacoes-aleatorias)
+
+;; lembrando o uso de cons para colocar um elemento como cabeça
+;; de uma sequência
+(cons (transacao-aleatoria) transacoes)
+
+(defn aleatorias 
+    ([quantidade]
+        (aleatorias quantidade 1 (list (transacao-aleatoria))))
+
+    ([quantidade quantas-ja-foram transacoes]
+        (if (< quantas-ja-foram quantidade)
+            (aleatorias quantidade (inc quantas-ja-foram) 
+                                   (cons (transacao-aleatoria) transacoes))
+            transacoes)))
+
+(aleatorias 4)
+(aleatorias 900000) ;StackOverflowError
+
+;otimizado
+(defn aleatorias 
+    ([quantidade]
+        (aleatorias quantidade 1 (list (transacao-aleatoria))))
+
+    ([quantidade quantas-ja-foram transacoes]
+        (if (= quantas-ja-foram quantidade)
+            transacoes
+            (recur quantidade (inc quantas-ja-foram) 
+                                   (cons (transacao-aleatoria) transacoes)))))
+
+(class (aleatorias 4))
+(class (aleatorias 9000004))
+
+(time (class (aleatorias 4)))
+(time (class (aleatorias 9000004)))
+
+
+;Vamos torná-la preguiçosa: 
+(defn aleatorias 
+    ([quantidade]
+        (aleatorias quantidade 1 (list (transacao-aleatoria))))
+
+    ([quantidade quantas-ja-foram transacoes]
+        (lazy-seq 
+            (if (= quantas-ja-foram quantidade)
+                transacoes
+                (aleatorias quantidade (inc quantas-ja-foram) 
+                                        (cons (transacao-aleatoria) transacoes))))))
+
+;; lazy-seq , que pega o que tem
+;; dentro dela e embala numa função, que se responsabilizará por
+;; criar uma sequência preguiçosa para nós. Neste caso, (if ...) .7
+
+(defn aleatorias []
+    (lazy-seq
+        (cons (transacao-aleatoria) (aleatorias))))
+
+(time (class (aleatorias)))
+(time (class (aleatorias)))
+
+(time (class (take 4 (aleatorias))))
+(time (class (take 900000 (aleatorias))))
+
+(take 4 (aleatorias))
+(take 900000 (aleatorias))
